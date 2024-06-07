@@ -21,19 +21,32 @@ type Options struct {
 	HttpRepo string `json:"httpRepo"`
 	KubeVersion string `json:"kubeVersion"`
 	Runtime string `json:"runtime"`
+	Timeout int64 `json:"timeout"`
 }
 
 var kubeletService = `
 [Unit]
-Description=Kubernetes Kubelet
-Documentation=https://github.com/kubernetes/kubernetes
-After=containerd.service
+Description=kubelet: The Kubernetes Node Agent
+Documentation=https://kubernetes.io/docs/
+After=containerd.service network.target local-fs.target
+Requires=containerd.service
 
 [Service]
-ExecStart=/usr/bin/kubelet  %s
+ExecStart=/usr/bin/kubelet %s
+
 Restart=always
 StartLimitInterval=0
 RestartSec=10
+
+# Having non-zero Limit*s causes performance problems due to accounting overhead
+# in the kernel. We recommend using cgroups to do container-local accounting.
+LimitNPROC=infinity
+LimitCORE=infinity
+LimitNOFILE=infinity
+# Comment TasksMax if your systemd version does not supports it.
+# Only systemd 226 and above support this version.
+#TasksMax=infinity
+OOMScoreAdjust=-999
 
 [Install]
 WantedBy=multi-user.target
@@ -198,7 +211,7 @@ func (op *Options) Reset() {
 		if err != nil {
 			log.Error(err)
 		}
-
+retry_docker:
 		err = global.Command.ExecuteCommand("systemctl", "daemon-reload")
 		if err != nil {
 			log.Error(err)
@@ -223,6 +236,31 @@ func (op *Options) Reset() {
 		}
 		log.Info("systemctl status kubelet", result)
 
+		ticker := time.NewTicker(time.Second * 60)
+		defer ticker.Stop()
+		done := make(chan bool)
+		go func() {
+			time.Sleep(time.Minute * time.Duration(op.Timeout))
+			done <- true
+		}()
+
+		for {
+			select {
+			case <-done:
+				log.Error("timeout")
+				return
+			case <-ticker.C:
+				state, err := global.Command.ExecuteCommandWithCombinedOutput("systemctl", "status", "kubelet")
+				log.Infof(state, err)
+				if !strings.Contains(state, "running"){
+					log.Info("Retrying docker...")
+					goto retry_docker
+				}else {
+					log.Info("docker is running.")
+					return
+				}
+			}
+		}
 
 		log.BKEFormat(log.INFO, "completed")
 		return
@@ -286,7 +324,7 @@ func (op *Options) Reset() {
 		if err != nil {
 			log.Error(err)
 		}
-
+retry_containerd:
 		err = global.Command.ExecuteCommand("systemctl", "daemon-reload")
 		if err != nil {
 			log.Error(err)
@@ -310,6 +348,32 @@ func (op *Options) Reset() {
 			log.Error(err)
 		}
 		log.Info("systemctl status kubelet", result)
+
+		ticker := time.NewTicker(time.Second * 60)
+		defer ticker.Stop()
+		done := make(chan bool)
+		go func() {
+			time.Sleep(time.Minute * time.Duration(op.Timeout))
+			done <- true
+		}()
+
+		for {
+			select {
+			case <-done:
+				log.Error("timeout")
+				return
+			case <-ticker.C:
+				state, err := global.Command.ExecuteCommandWithCombinedOutput("systemctl", "status", "kubelet")
+				log.Infof(state, err)
+				if !strings.Contains(state, "running"){
+					log.Info("Retrying containerd...")
+					goto retry_containerd
+				}else {
+					log.Info("Container is running.")
+					return
+				}
+			}
+		}
 
 
 		log.BKEFormat(log.INFO, "completed")

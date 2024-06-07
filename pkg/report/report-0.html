@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>服务器预检报告</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			font-size: 14px;
+			color: #333;
+			margin: 0;
+			padding: 0;
+		}
+		
+		h1 {
+			font-size: 28px;
+			font-weight: bold;
+			margin: 20px 0;
+			text-align: center;
+			color: #333;
+		}
+		
+		h2 {
+			font-size: 24px;
+			font-weight: bold;
+			margin: 20px 0 10px;
+			color: #333;
+		}
+
+		.flex-container {
+  			display: flex;
+			font-size: 20px;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 2px;
+		}
+		
+		table {
+			border-collapse: collapse;
+			width: 100%;
+			margin-bottom: 20px;
+			box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+		}
+		
+		th, td {
+			text-align: left;
+			padding: 8px;
+			border: 1px solid #ddd;
+			font-size: 14px;
+			color: #333;
+		}
+		
+		tr:nth-child(even) {
+			background-color: #f2f2f2;
+		}
+		
+		th {
+			background-color: #4c7aaf;
+			color: white;
+			font-weight: bold;
+		}
+		
+		.footer {
+			font-size: 12px;
+			color: #999;
+			text-align: center;
+			margin-top: 20px;
+		}
+	</style>
+</head>
+<body>
+	<h1>检查报告</h1>	
+	<h2>统计信息</h2>
+	<div class="flex-container">
+	<div> 开始时间：20230401181211 </div> 
+	<div> 持续时间：3600s </div> 
+	<div> 随机种子：efaxfaegexgea </div>
+	</div>
+	<table>
+		<tr>
+			<th>总测试数</th>
+			<th>成功数</th>
+			<th>失败数</th>
+			<th>警告数</th>
+			<th>测试结果</th>
+		</tr>
+		<tr>
+			<td>100</td>
+			<td>80</td>
+			<td>10</td>
+			<td>10</td>
+			<td style="color:rgb(61, 47, 255)">通过</td>
+		</tr>
+	</table>
+	
+	<h2>测试结果</h2>
+	<table>
+		<tr>
+			<th>测试名称</th>
+			<th>状态</th>
+			<th>详细信息</th>
+		</tr>
+		<tr>
+			<td>测试1</td>
+			<td style="color:green">成功</td>
+			<td>无</td>
+		</tr>
+		<tr>
+			<td>测试2</td>
+			<td style="color:red">失败</td>
+			<td>错误信息</td>
+		</tr>
+		<tr>
+			<td>测试3</td>
+			<td style="color:orange">警告</td>
+			<td>警告信息</td>
+		</tr>
+	</table>
+	
+	<h2>服务器信息</h2>
+	<table>
+		<tr>
+			<th>服务器</th>
+			<th>CPU</th>
+			<th>内存</th>
+			<th>网络</th>
+			<th>磁盘</th>
+		</tr>
+		<tr>
+			<td>服务器1</td>
+			<td>Intel Xeon E5-2680 v4</td>
+			<td>64 GB</td>
+			<td>1 Gbps</td>
+			<td>2 TB</td>
+		</tr>
+		<tr>
+			<td>服务器2</td>
+			<td>Intel Xeon E5-2680 v4</td>
+			<td>64 GB</td>
+			<td>1 Gbps</td>
+			<td>2 TB</td>
+		</tr>
+	</table>
+</body>
+</html>
