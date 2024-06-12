@@ -29,7 +29,7 @@ var kubeletService = `
 Description=kubelet: The Kubernetes Node Agent
 Documentation=https://kubernetes.io/docs/
 After=containerd.service network.target local-fs.target
-Requires=containerd.service
+
 
 [Service]
 ExecStart=/usr/bin/kubelet %s
